@@ -1,0 +1,9 @@
+# Python dependencies for Bluetooth Signal Strength Monitor
+
+# Core Bluetooth library
+pybluez>=0.23
+
+# Windows-specific (optional, for enhanced Windows support)
+# Uncomment if running on Windows
+# WMI>=1.5.1; sys_platform == 'win32'
+# pywin32>=300; sys_platform == 'win32'
