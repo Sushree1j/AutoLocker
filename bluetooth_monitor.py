@@ -75,7 +75,11 @@ class BluetoothMonitor:
                 # Parse RSSI value from output like "RSSI return value: -45"
                 if "RSSI return value:" in output:
                     rssi_str = output.split("RSSI return value:")[1].strip()
-                    return int(rssi_str)
+                    try:
+                        return int(rssi_str)
+                    except ValueError:
+                        # Invalid RSSI format
+                        pass
             
             # Alternative method using bluetoothctl
             result = subprocess.run(
@@ -89,7 +93,11 @@ class BluetoothMonitor:
                 for line in result.stdout.split('\n'):
                     if 'RSSI:' in line:
                         rssi_str = line.split('RSSI:')[1].strip()
-                        return int(rssi_str)
+                        try:
+                            return int(rssi_str)
+                        except ValueError:
+                            # Invalid RSSI format
+                            pass
             
             return None
             

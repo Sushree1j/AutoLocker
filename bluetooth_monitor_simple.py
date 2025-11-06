@@ -13,6 +13,10 @@ from typing import List, Optional, Tuple
 
 PLATFORM = platform.system()
 
+# Constants
+MIN_UPDATE_INTERVAL = 0.1  # Minimum update interval in seconds
+MAX_UPDATE_INTERVAL = 60   # Maximum update interval in seconds
+
 
 def discover_devices_pybluez() -> List[Tuple[str, str]]:
     """
@@ -116,7 +120,8 @@ def get_rssi_linux_bluetoothctl(address: str) -> Optional[int]:
                     rssi_str = line.split('RSSI:')[1].strip()
                     # Remove any non-numeric characters except minus
                     rssi_str = ''.join(c for c in rssi_str if c.isdigit() or c == '-')
-                    if rssi_str:
+                    # Validate format before converting
+                    if rssi_str and rssi_str != '-' and rssi_str.lstrip('-').isdigit():
                         return int(rssi_str)
         
         return None
@@ -304,12 +309,12 @@ def main():
         interval_input = input("\nUpdate interval in seconds (default: 1.0): ").strip()
         interval = float(interval_input) if interval_input else 1.0
         
-        if interval < 0.1:
-            print("Interval too short, using 0.1 seconds")
-            interval = 0.1
-        elif interval > 60:
-            print("Interval too long, using 60 seconds")
-            interval = 60
+        if interval < MIN_UPDATE_INTERVAL:
+            print(f"Interval too short, using {MIN_UPDATE_INTERVAL} seconds")
+            interval = MIN_UPDATE_INTERVAL
+        elif interval > MAX_UPDATE_INTERVAL:
+            print(f"Interval too long, using {MAX_UPDATE_INTERVAL} seconds")
+            interval = MAX_UPDATE_INTERVAL
             
     except (ValueError, KeyboardInterrupt):
         interval = 1.0
