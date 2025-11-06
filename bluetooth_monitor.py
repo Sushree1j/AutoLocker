@@ -10,6 +10,11 @@ import time
 import platform
 from typing import List, Dict, Optional
 
+# Signal strength thresholds (in dBm)
+RSSI_EXCELLENT = -50
+RSSI_GOOD = -60
+RSSI_FAIR = -70
+
 # Platform-specific imports
 if platform.system() == "Windows":
     try:
@@ -117,19 +122,11 @@ class BluetoothMonitor:
         Returns RSSI value in dBm or None if unavailable
         """
         try:
-            # Windows-specific implementation using WMI
-            import wmi
-            c = wmi.WMI()
+            # Note: Windows RSSI access is limited by the Bluetooth API
+            # WMI doesn't provide direct RSSI values for Bluetooth devices
+            # This would require Windows-specific Bluetooth APIs or third-party libraries
             
-            # Query Bluetooth devices
-            for device in c.Win32_PnPEntity():
-                if device.PNPDeviceID and 'BTHENUM' in device.PNPDeviceID:
-                    # Extract RSSI if available
-                    # This is a simplified approach
-                    pass
-            
-            # Fallback: use PyBluez socket-based approach
-            # This provides limited RSSI information on Windows
+            # Fallback: PyBluez has limited RSSI support on Windows
             print("Note: Windows RSSI detection has limitations")
             return None
             
@@ -158,11 +155,11 @@ class BluetoothMonitor:
             return "N/A"
         
         quality = ""
-        if rssi >= -50:
+        if rssi >= RSSI_EXCELLENT:
             quality = "Excellent"
-        elif rssi >= -60:
+        elif rssi >= RSSI_GOOD:
             quality = "Good"
-        elif rssi >= -70:
+        elif rssi >= RSSI_FAIR:
             quality = "Fair"
         else:
             quality = "Poor"
@@ -184,9 +181,7 @@ class BluetoothMonitor:
         print("-" * 60)
         
         try:
-            iteration = 0
             while True:
-                iteration += 1
                 rssi = self.get_signal_strength(address)
                 signal_str = self.format_signal_strength(rssi)
                 

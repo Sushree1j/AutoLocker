@@ -17,6 +17,11 @@ PLATFORM = platform.system()
 MIN_UPDATE_INTERVAL = 0.1  # Minimum update interval in seconds
 MAX_UPDATE_INTERVAL = 60   # Maximum update interval in seconds
 
+# Signal strength thresholds (in dBm)
+RSSI_EXCELLENT = -50
+RSSI_GOOD = -60
+RSSI_FAIR = -70
+
 
 def discover_devices_pybluez() -> List[Tuple[str, str]]:
     """
@@ -159,13 +164,13 @@ def format_signal_strength(rssi: Optional[int]) -> str:
     if rssi is None:
         return "N/A (not available)"
     
-    if rssi >= -50:
+    if rssi >= RSSI_EXCELLENT:
         quality = "Excellent"
         bars = "████████████"
-    elif rssi >= -60:
+    elif rssi >= RSSI_GOOD:
         quality = "Good"
         bars = "█████████░░░"
-    elif rssi >= -70:
+    elif rssi >= RSSI_FAIR:
         quality = "Fair"
         bars = "██████░░░░░░"
     else:
